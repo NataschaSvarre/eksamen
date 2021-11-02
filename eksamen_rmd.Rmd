@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-author: "Patrick Berthelsen"
+title: "NFL NFL hejhej"
+author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic"
 date: "11/2/2021"
 output: html_document
 ---
@@ -9,7 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Dette er en test for Rmarkdown... Hold kæft det er nemt
-#hashtag det er nemt
-#ses kl er 13:15
-#Ryddet op - klar!
+Ryddet op - klar!
+
+```{r}
+library(ggplot2)
+```
+
