@@ -17,3 +17,5 @@ library(tidyverse)
 
 ```
 Klokken er 13:34
+
+Ses homies - jeg skrider
