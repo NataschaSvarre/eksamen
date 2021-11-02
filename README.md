@@ -1,5 +1,2 @@
 # eksamen
-#Hola 
 
-
-#Hej
