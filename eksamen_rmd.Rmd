@@ -32,3 +32,4 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 #Dette er en test for Rmarkdown... Hold kæft det er nemt
 #hashtag det er nemt
+#ses kl er 13:15
