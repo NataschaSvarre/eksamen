@@ -1,6 +1,6 @@
 ---
 title: "NFL Data"
-author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic"
+author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic)"
 date: "11/2/2021"
 output: html_document
 ---
@@ -16,4 +16,4 @@ library(ggplot2)
 library(tidyverse)
 
 ```
-
+Klokken er 13:34
