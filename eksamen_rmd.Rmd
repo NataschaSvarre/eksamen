@@ -16,6 +16,9 @@ library(ggplot2)
 library(tidyverse)
 
 ```
-Klokken er 13:34
 
-Ses homies - jeg skrider
+
+```{r}
+read.csv("games.csv")
+```
+
