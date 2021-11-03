@@ -22,3 +22,4 @@ library(tidyverse)
 read.csv("games.csv")
 ```
 
+Hej kan i se det her
