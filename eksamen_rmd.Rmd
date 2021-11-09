@@ -27,7 +27,7 @@ game_winners <- games["winner"]
 
 
 library(RColorBrewer)         
-library(wordcloud)
+library(wordcloud)  
 
 
 ```
