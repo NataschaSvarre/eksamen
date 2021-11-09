@@ -16,20 +16,17 @@ library(tidyverse)
 ```
 
 
-```{r}
-read.csv("games.csv")
-```
-
 
 
 ### Wordcloud
 ```{r}
-#Dataset of only
+#Dataset of only winners of games
 games <- read.csv("games.csv")
 
 game_winners <- games["winner"]
 
 
+library(RColorBrewer)         
 library(wordcloud)
 
 
