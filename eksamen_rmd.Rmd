@@ -41,11 +41,19 @@ pacman::p_load(
 standings <- read.csv("standings.csv")
 standings$team <- NULL
 
+head(standings)
+str(standings) # Dispalys the structure of our data.
+
+
+
+
 
 games <- read.csv("games.csv")
-games[ ,c('home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
+games$winners <- stringr::word(games$winner, -1)
+games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
 
-ggg <- stringr::word(games$winner, -1)
+head(games)
+str(games)
 
 
 ```
@@ -55,15 +63,12 @@ ggg <- stringr::word(games$winner, -1)
 ### EDA 
 ```{r}
 
-head(standings)
-str(standings) # Dispalys the structure of our data.
-
 
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
 
 
-#Line plot of wins in regular season by the SB-winner 2000-2019
+#Barplot of wins in regular season by the SB-winner 2000-2019
 sb_winners %>% 
   ggplot(aes(x = year, y = wins)) + 
   geom_line() +
@@ -71,11 +76,31 @@ sb_winners %>%
   theme_linedraw() + 
   theme(plot.title = element_text(hjust = 0.5))
 
-
+#Barplot of SB-wins per team
 ggplot(data = sb_winners) + 
   geom_bar(aes(team_name)) + 
-  labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won")
-#hej
+  theme_linedraw() + 
+  labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Barplot of total wins per team
+ggplot(data = games) + 
+  geom_bar(aes(winners)) + 
+  theme_linedraw() + 
+  labs(title = "Number of games won pr team", x = "Teams", y = "Games won") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  coord_flip()
+
+#Correlation between points and yards
+games %>% 
+    ggplot(aes(x = yds_win, y = pts_win)) + 
+    geom_point()
+
+games %>% 
+    ggplot(aes(x = yds_loss, y = pts_loss)) + 
+    geom_point()
+
+
 
 ```
 
@@ -86,8 +111,6 @@ ggplot(data = sb_winners) +
 ```{r}
 #Dataset of only winners of games
 
-head(games)
-str(games)
 
 game_winners <- games["winner"]
 
