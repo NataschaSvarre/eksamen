@@ -8,18 +8,21 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+### Always run this
 ```{r}
 library(tidyverse)
+
+standings <- read.csv("standings.csv")
+games <- read.csv("games.csv")
 
 ```
 
 ### EDA 
 ```{r}
-standings <- read.csv("standings.csv")
 
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
+
 
 #Line plot of wins in regular season by the SB-winner 2000-2019
 sb_winners %>% 
@@ -28,6 +31,8 @@ sb_winners %>%
   labs(title = "Regular season wins by SB-sinners 2000-2019", x = "Year", y = "Games won") +
   theme_linedraw() + 
   theme(plot.title = element_text(hjust = 0.5))
+
+
 ```
 
 
@@ -36,7 +41,6 @@ sb_winners %>%
 ### Wordcloud
 ```{r}
 #Dataset of only winners of games
-games <- read.csv("games.csv")
 
 game_winners <- games["winner"]
 
