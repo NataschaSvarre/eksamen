@@ -8,9 +8,10 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+### Always run this
 ```{r}
 library(tidyverse)
+
 
 pacman::p_load(
   ggplot2, #for plotting graphics
@@ -29,12 +30,15 @@ pacman::p_load(
   gganimate, #for animated plots
   gifski #for rendering animated plots as GIFs instead of single frames
 )
+=======
+standings <- read.csv("standings.csv")
+games <- read.csv("games.csv")
+
 
 ```
 
 ### EDA 
 ```{r}
-standings <- read.csv("standings.csv")
 
 head(standings)
 str(standings) # Dispalys the structure of our data.
@@ -42,6 +46,7 @@ str(standings) # Dispalys the structure of our data.
 
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
+
 
 #Line plot of wins in regular season by the SB-winner 2000-2019
 sb_winners %>% 
@@ -51,9 +56,11 @@ sb_winners %>%
   theme_linedraw() + 
   theme(plot.title = element_text(hjust = 0.5))
 
+
 ggplot(data = sb_winners) + 
   geom_bar(aes(team_name)) + 
   labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won")
+
 
 ```
 
@@ -63,7 +70,6 @@ ggplot(data = sb_winners) +
 ### Wordcloud
 ```{r}
 #Dataset of only winners of games
-games <- read.csv("games.csv")
 
 head(games)
 str(games)
