@@ -12,11 +12,33 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(tidyverse)
 
+pacman::p_load(
+  ggplot2, #for plotting graphics
+  ggmap, #for plotting maps
+  RColorBrewer, #provide pretty colour palettes
+  lubridate, #for converting time variables into date format
+  hrbrthemes, #for more style themes
+  data.table, #for working with data.table
+  dplyr, #for count function
+  tidytext, #for text mining functions such as unnest()
+  wordcloud,
+  tm, #for removing stopwords
+  ggdist, #for raincloud plots
+  tidyquant, #for theme_tq
+  prismatic, #for color handling in plots
+  gganimate, #for animated plots
+  gifski #for rendering animated plots as GIFs instead of single frames
+)
+
 ```
 
 ### EDA 
 ```{r}
 standings <- read.csv("standings.csv")
+
+head(standings)
+str(standings) # Dispalys the structure of our data.
+
 
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
@@ -28,6 +50,11 @@ sb_winners %>%
   labs(title = "Regular season wins by SB-sinners 2000-2019", x = "Year", y = "Games won") +
   theme_linedraw() + 
   theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(data = sb_winners) + 
+  geom_bar(aes(team_name)) + 
+  labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won")
+
 ```
 
 
@@ -37,6 +64,9 @@ sb_winners %>%
 ```{r}
 #Dataset of only winners of games
 games <- read.csv("games.csv")
+
+head(games)
+str(games)
 
 game_winners <- games["winner"]
 
