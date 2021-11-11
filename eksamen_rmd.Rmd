@@ -10,9 +10,24 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-library(ggplot2)
 library(tidyverse)
 
+```
+
+### EDA 
+```{r}
+standings <- read.csv("standings.csv")
+
+#Subset of SB-Winners
+sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
+
+#Line plot of wins in regular season by the SB-winner 2000-2019
+sb_winners %>% 
+  ggplot(aes(x = year, y = wins)) + 
+  geom_line() +
+  labs(title = "Regular season wins by SB-sinners 2000-2019", x = "Year", y = "Games won") +
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 
