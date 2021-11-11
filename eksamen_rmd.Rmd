@@ -30,25 +30,22 @@ pacman::p_load(
   gganimate, #for animated plots
   gifski #for rendering animated plots as GIFs instead of single frames
 )
-=======
-
 
 
 ```
 
+
 ### Data cleaning
 ```{r}
-#Aligning the city names of the franchises 
 
 standings <- read.csv("standings.csv")
 standings$team <- NULL
 
 
-
-
 games <- read.csv("games.csv")
 games[ ,c('home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
 
+ggg <- stringr::word(games$winner, -1)
 
 
 ```
