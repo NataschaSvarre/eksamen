@@ -31,11 +31,29 @@ pacman::p_load(
   gifski #for rendering animated plots as GIFs instead of single frames
 )
 =======
-standings <- read.csv("standings.csv")
-games <- read.csv("games.csv")
+
 
 
 ```
+
+### Data cleaning
+```{r}
+#Aligning the city names of the franchises 
+
+standings <- read.csv("standings.csv")
+standings$team <- NULL
+
+
+
+
+games <- read.csv("games.csv")
+games[ ,c('home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
+
+
+
+```
+
+
 
 ### EDA 
 ```{r}
