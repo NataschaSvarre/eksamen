@@ -60,7 +60,7 @@ sb_winners %>%
 ggplot(data = sb_winners) + 
   geom_bar(aes(team_name)) + 
   labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won")
-
+#hej
 
 ```
 
