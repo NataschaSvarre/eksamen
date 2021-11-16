@@ -120,7 +120,6 @@ game_winners <- games["winners"] %>%
   ungroup() %>% #ungrouping the words again
   count(winners, sort = TRUE)
 
-
 wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
           max.words=200, random.order=FALSE, rot.per=0.3, 
           colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
