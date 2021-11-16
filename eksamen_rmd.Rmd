@@ -111,29 +111,19 @@ games %>%
 ```{r}
 #Dataset of only winners of games
 
-
-game_winners <- games["winners"]
-
-
 library(RColorBrewer)         
 library(wordcloud)  
-library(tm)
+
+game_winners <- games["winners"] %>% 
+  group_by(winners) %>% #grouping each word so that we can count number of times the word appears below
+  mutate(total_wins = n()) %>% #counting number of times the word appears
+  ungroup() %>% #ungrouping the words again
+  count(winners, sort = TRUE)
 
 
-inspect(game_winners)
-
-
-
-
-
-wordcloud(game_winners
-        , scale=c(5,0.5)     # Set min and max scale
-        , max.words=100      # Set top n words
-        , random.order=FALSE # Words in decreasing freq
-        , rot.per=0.35       # % of vertical words
-        , use.r.layout=FALSE # Use C++ collision detection
-        , colors=brewer.pal(8, "Dark2"))
-
+wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
+          max.words=200, random.order=FALSE, rot.per=0.3, 
+          colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 ```
 
 
