@@ -112,12 +112,27 @@ games %>%
 #Dataset of only winners of games
 
 
-game_winners <- games["winner"]
+game_winners <- games["winners"]
 
 
 library(RColorBrewer)         
 library(wordcloud)  
+library(tm)
 
+
+inspect(game_winners)
+
+
+
+
+
+wordcloud(game_winners
+        , scale=c(5,0.5)     # Set min and max scale
+        , max.words=100      # Set top n words
+        , random.order=FALSE # Words in decreasing freq
+        , rot.per=0.35       # % of vertical words
+        , use.r.layout=FALSE # Use C++ collision detection
+        , colors=brewer.pal(8, "Dark2"))
 
 ```
 
