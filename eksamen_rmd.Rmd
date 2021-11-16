@@ -31,6 +31,8 @@ pacman::p_load(
   gifski #for rendering animated plots as GIFs instead of single frames
 )
 
+install.packages("forcats")
+library(forcats)
 
 ```
 
@@ -85,13 +87,15 @@ ggplot(data = sb_winners) +
 
 #Barplot of total wins per team
 ggplot(data = games) + 
-  geom_bar(aes(winners)) + 
+  geom_bar(aes(x = fct_infreq(winners))) + 
   theme_linedraw() + 
   labs(title = "Number of games won pr team", x = "Teams", y = "Games won") +
   theme(plot.title = element_text(hjust = 0.5)) + 
-  coord_flip()
+  coord_flip() 
 
-#Correlation between points and yards
+
+
+  #Correlation between points and yards
 games %>% 
     ggplot(aes(x = yds_win, y = pts_win)) + 
     geom_point()
