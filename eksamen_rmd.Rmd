@@ -28,7 +28,8 @@ pacman::p_load(
   prismatic, #for color handling in plots
   gganimate, #for animated plots
   gifski, #for rendering animated plots as GIFs instead of single frames
-  knitr
+  knitr,
+  caret
 )
 
 install.packages("forcats")
@@ -141,10 +142,10 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 games_index <- createDataPartition(games$winners_home, p=0.8, list=FALSE)
 
 # Subset training set with index
-games_train <- games[index,]
+games_train <- games[games_index,]
 
 # Subset test set with index
-games_test <- games[-index,]
+games_test <- games[-games_index,]
 ```
 
 ### Prediction models
