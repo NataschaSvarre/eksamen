@@ -55,7 +55,8 @@ games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
 games$tie <- ifelse(games$tie == "NA", 0 ,1)
 games$tie[is.na(games$tie)] <- 0
-games$home_win <- ifelse(games$winners == games$home_team_name && games$tie == 0 ,1,0)
+games$winners <- ifelse(games$tie == 1, "No Winner", games$winners)
+games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
 games$home_win <- as.factor(games$home_win)
  
 
