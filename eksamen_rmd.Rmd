@@ -53,8 +53,11 @@ str(standings) # Dispalys the structure of our data.
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
-games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
+games$tie <- ifelse(games$tie == "NA", 0 ,1)
+games$tie[is.na(games$tie)] <- 0
+games$home_win <- ifelse(games$winners == games$home_team_name && games$tie == 0 ,1,0)
 games$home_win <- as.factor(games$home_win)
+ 
 
 # Training and test dataset  
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE)
