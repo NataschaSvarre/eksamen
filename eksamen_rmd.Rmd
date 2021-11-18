@@ -56,6 +56,10 @@ games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
 games$winners_home <- ifelse(games$winners == games$home_team_name ,1,0)
 
+# Training and test dataset  
+games_index <- createDataPartition(games$winners_home, p=0.8, list=FALSE)
+games_train <- games[games_index,]
+games_test <- games[-games_index,]
 
 head(games)
 str(games)
@@ -132,21 +136,8 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
           colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 ```
 
-### Train and test dataset
-```{r}
-#Copied from Caroline
 
 
-
-# Create index to split based on labels  
-games_index <- createDataPartition(games$winners_home, p=0.8, list=FALSE)
-
-# Subset training set with index
-games_train <- games[games_index,]
-
-# Subset test set with index
-games_test <- games[-games_index,]
-```
 
 ### Prediction models
 
