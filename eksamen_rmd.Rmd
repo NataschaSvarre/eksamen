@@ -53,6 +53,8 @@ str(standings) # Dispalys the structure of our data.
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
+games$winners_home <- ifelse(games$winners == games$home_team_name ,1,0)
+
 
 head(games)
 str(games)
@@ -132,6 +134,8 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 ### Train and test dataset
 ```{r}
 #Copied from Caroline
+
+
 
 # Create index to split based on labels  
 index <- createDataPartition(games$y, p=0.8, list=FALSE)
