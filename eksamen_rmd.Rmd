@@ -29,7 +29,7 @@ pacman::p_load(
   gganimate, #for animated plots
   gifski, #for rendering animated plots as GIFs instead of single frames
   knitr,
-  caret
+  caret,
 )
 
 install.packages("forcats")
@@ -50,19 +50,19 @@ str(standings) # Dispalys the structure of our data.
 
 
 
-
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
-games$winners_home <- ifelse(games$winners == games$home_team_name ,1,0)
+games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
+games$home_win <- as.factor(games$home_win)
 
 # Training and test dataset  
-games_index <- createDataPartition(games$winners_home, p=0.8, list=FALSE)
+games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE)
 games_train <- games[games_index,]
 games_test <- games[-games_index,]
 
-head(games)
 str(games)
+
 
 
 ```
@@ -112,7 +112,6 @@ games %>%
     geom_point()
 
 
-
 ```
 
 
@@ -140,6 +139,10 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 
 ### Prediction models
+```{r}
+set.seed(356)
+```
+
 
 ## Naive Bayes
 ```{r}
@@ -150,9 +153,17 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 ## SVM (Support Vector Machine)
 ```{r}
-set.seed(2000)
 
-start_time <- Sys.time()
+model_svm<- train(games_train[, 1:12], games_train[, 13], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,1:12])
+
+# Confusion matrix 
+confusionMatrix(predictions_svm, games_test[,13], positive = "1")
+
+varimp_svm <- varImp(model_svm)
+plot(varimp_svm, main="Variable Importance with support vector machine classifier")
+
+
 
 
 #Copied from Group 3 last year
@@ -170,7 +181,6 @@ end_time - start_time
 
 ## Random forest
 ```{r}
-
 
 
 ```
