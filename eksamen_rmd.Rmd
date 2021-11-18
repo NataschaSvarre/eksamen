@@ -32,8 +32,6 @@ pacman::p_load(
   caret,
 )
 
-install.packages("forcats")
-library(forcats)
 
 ```
 
@@ -168,12 +166,6 @@ varimp_svm <- varImp(model_svm)
 plot(varimp_svm, main="Variable Importance with support vector machine classifier")
 
 
-
-
-#Copied from Group 3 last year
-start_time <- Sys.time()
-model_svm<- train(train_data[, -77], train_data[, 77], method = 'svmLinear') predictions_svm <- predict(object = model_svm, validation_data[,-77]) end_time <- Sys.time()
-end_time - start_time
 
 ```
 
