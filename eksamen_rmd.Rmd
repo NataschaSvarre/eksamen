@@ -134,7 +134,7 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 #Copied from Caroline
 
 # Create index to split based on labels  
-index <- createDataPartition(bank_data$y, p=0.8, list=FALSE)
+index <- createDataPartition(games$y, p=0.8, list=FALSE)
 
 # Subset training set with index
 bank_train <- bank_data[index,]
