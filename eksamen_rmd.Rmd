@@ -138,13 +138,13 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 
 # Create index to split based on labels  
-index <- createDataPartition(games$y, p=0.8, list=FALSE)
+games_index <- createDataPartition(games$winners_home, p=0.8, list=FALSE)
 
 # Subset training set with index
-bank_train <- bank_data[index,]
+games_train <- games[index,]
 
 # Subset test set with index
-bank_test <- bank_data[-index,]
+games_test <- games[-index,]
 ```
 
 ### Prediction models
