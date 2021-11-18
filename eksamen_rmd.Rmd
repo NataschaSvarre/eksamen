@@ -10,10 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Always run this
 ```{r}
-library(tidyverse)
-
 
 pacman::p_load(
+  tidyverse, 
   ggplot2, #for plotting graphics
   ggmap, #for plotting maps
   RColorBrewer, #provide pretty colour palettes
@@ -28,7 +27,8 @@ pacman::p_load(
   tidyquant, #for theme_tq
   prismatic, #for color handling in plots
   gganimate, #for animated plots
-  gifski #for rendering animated plots as GIFs instead of single frames
+  gifski, #for rendering animated plots as GIFs instead of single frames
+  knitr
 )
 
 install.packages("forcats")
@@ -129,5 +129,54 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
           colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 ```
 
+### Train and test dataset
+```{r}
+#Copied from Caroline
+
+# Create index to split based on labels  
+index <- createDataPartition(bank_data$y, p=0.8, list=FALSE)
+
+# Subset training set with index
+bank_train <- bank_data[index,]
+
+# Subset test set with index
+bank_test <- bank_data[-index,]
+```
+
+### Prediction models
+
+## Naive Bayes
+```{r}
+
+```
+
+
+
+## SVM (Support Vector Machine)
+```{r}
+set.seed(2000)
+
+start_time <- Sys.time()
+
+
+#Copied from Group 3 last year
+start_time <- Sys.time()
+model_svm<- train(train_data[, -77], train_data[, 77], method = 'svmLinear') predictions_svm <- predict(object = model_svm, validation_data[,-77]) end_time <- Sys.time()
+end_time - start_time
+
+```
+
+## K-nearest neighbour
+```{r}
+
+
+```
+
+## Random forest
+```{r}
+
+
+
+```
 
 
