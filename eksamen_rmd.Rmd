@@ -197,7 +197,17 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 
 ## K-nearest neighbour
 ```{r}
+# Train a model using KNN algorithm
+model_knn_norm <- train(games_train[, 3:11], games_train[, 2], method = 'knn',preProcess = c("range")) 
 
+# Predict the labels of the test set
+predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:11]) #the first 11 variables
+
+# Confusion matrix 
+confusionMatrix(predictions_knn_norm, games_test[,2], positive = "1") #the 12th variable is our outcome/predictive variable
+
+varimp_knn_norm <- varImp(model_knn_norm)
+plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifier")
 
 ```
 
