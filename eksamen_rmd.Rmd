@@ -30,7 +30,12 @@ pacman::p_load(
   gganimate, #for animated plots
   gifski, #for rendering animated plots as GIFs instead of single frames
   knitr,
-  naivebayes
+  naivebayes,
+  randomForest,
+  tree,
+  devtools,
+  plotrix,
+  reprtree
 )
 
 
@@ -90,8 +95,6 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 ### EDA 
 ```{r}
-
-
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
 
@@ -199,7 +202,7 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 ```{r}
 # Train a model using KNN algorithm
 model_knn_norm <- train(games_train[, 3:11], games_train[, 2], method = 'knn',preProcess = c("range")) 
-
+ 
 # Predict the labels of the test set
 predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:11]) #the first 11 variables
 
@@ -211,8 +214,29 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 
 ```
 
-## Random forest
+## Decision tree
 ```{r}
+
+games_train[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleting variables
+games_test[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleting variables
+
+
+
+#Decision tree
+model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
+predictions_dt <- predict(object = model_dt, games_test[,3:8])
+
+# Confusion matrix 
+confusionMatrix(predictions_dt, games_test[,2], positive = "1")
+
+#Variable importance plot
+varimp_dt <- varImp(model_dt)
+plot(varimp_dt, main="Variable Importance with decision tree classifier")
+
+#Let's take a look at how the decision tree that the model has used to predict ended up looking!
+prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
+
+
 
 
 ```
