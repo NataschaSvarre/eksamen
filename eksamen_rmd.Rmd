@@ -172,6 +172,7 @@ set.seed(356)
 ## SVM (Support Vector Machine)
 ```{r}
 
+
 model_svm<- train(games_train[, 3:10], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
 predictions_svm <- predict(object = model_svm, games_test[,3:10])
 
