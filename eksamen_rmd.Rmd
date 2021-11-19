@@ -50,20 +50,26 @@ str(standings) # Dispalys the structure of our data.
 
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
-games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city', 'year', 'week')] <- list(NULL)
+games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city', 'year', 'week')] <- list(NULL) #deleting irrelavent variables
 games$tie <- ifelse(games$tie == "NA", 0 ,1)
 games$tie[is.na(games$tie)] <- 0
 games$winners <- ifelse(games$tie == 1, "No Winner", games$winners)
 games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
 games$home_win <- as.factor(games$home_win)
 
-games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss)
-games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss)
-games$pts_home_margin <- games$pts_home - games$pts_away
+games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss) #creating variable: home team points
+games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss) #creating variable: away team points 
+games$pts_home_margin <- games$pts_home - games$pts_away                     #creating variable: home team points margin
  
-games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss)
-games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss)
-games$yds_home_margin <- games$yds_home - games$yds_away
+games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss) #creating variable: home team yards
+games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss) #creating variable: away team yards
+games$yds_home_margin <- games$yds_home - games$yds_away                     #creating variable: home team yards margin
+
+games$turnovers_home <- ifelse(games$home_win == 1, games$turnovers_win, games$turnovers_loss) #creating variable: home team turnovers
+games$turnovers_away <- ifelse(games$home_win == 0, games$turnovers_win, games$turnovers_loss) #creating variable: away team turnovers
+games$turnovers_home_margin <- games$turnovers_home - games$turnovers_away                     #creating variable: home team turnovers margin
+
+games[ ,c('pts_win', 'pts_loss', 'yds_win', 'yds_loss', 'turnovers_win', 'turnovers_loss')] <- list(NULL) #deleting old variables
 
 str(games)
 
@@ -72,10 +78,10 @@ str(games)
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
 
 games_train <- games[games_index,]
-games_train[ ,c('year', 'week', 'away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+games_train[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 games_test <- games[-games_index,]
-games_test[ ,c('year', 'week', 'away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 ```
 
@@ -166,11 +172,11 @@ set.seed(356)
 ## SVM (Support Vector Machine)
 ```{r}
 
-model_svm<- train(games_train[, 1:7], games_train[, 8], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,1:7])
+model_svm<- train(games_train[, 3:10], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,3:10])
 
 # Confusion matrix 
-confusionMatrix(predictions_svm, games_test[,8], positive = "1")
+confusionMatrix(predictions_svm, games_test[,2], positive = "1")
 
 varimp_svm <- varImp(model_svm)
 plot(varimp_svm, main="Variable Importance with support vector machine classifier")
