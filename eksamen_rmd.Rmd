@@ -50,7 +50,7 @@ str(standings) # Dispalys the structure of our data.
 
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
-games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city')] <- list(NULL)
+games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city', 'year', 'week')] <- list(NULL)
 games$tie <- ifelse(games$tie == "NA", 0 ,1)
 games$tie[is.na(games$tie)] <- 0
 games$winners <- ifelse(games$tie == 1, "No Winner", games$winners)
@@ -59,14 +59,14 @@ games$home_win <- as.factor(games$home_win)
 
 games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss)
 games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss)
+games$pts_home_margin <- games$pts_home - games$pts_away
  
 games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss)
 games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss)
-
+games$yds_home_margin <- games$yds_home - games$yds_away
 
 str(games)
 
-summary(games_train)
 
 # Training and test dataset  
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
