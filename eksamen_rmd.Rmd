@@ -29,7 +29,8 @@ pacman::p_load(
   prismatic, #for color handling in plots
   gganimate, #for animated plots
   gifski, #for rendering animated plots as GIFs instead of single frames
-  knitr
+  knitr,
+  naivebayes
 )
 
 
@@ -162,9 +163,17 @@ set.seed(356)
 ```
 
 
+
 ## Naive Bayes
 ```{r}
+model_nb <- train(games_train[, 3:11], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb <- predict(object = model_nb, games_test[,3:11])
 
+# Confusion matrix 
+confusionMatrix(predictions_nb, games_test[,2], positive = "1")
+
+varimp_nb <- varImp(model_nb)
+plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 ```
 
 
@@ -173,8 +182,8 @@ set.seed(356)
 ```{r}
 
 
-model_svm<- train(games_train[, 3:10], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,3:10])
+model_svm<- train(games_train[, 3:11], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,3:11])
 
 # Confusion matrix 
 confusionMatrix(predictions_svm, games_test[,2], positive = "1")
