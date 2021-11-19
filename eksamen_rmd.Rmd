@@ -12,14 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 pacman::p_load(
-  tidyverse, 
-  ggplot2, #for plotting graphics
+  tidyverse, #tidyverse includes ggplot2, dplyr, forcats and more. 
+  caret, 
+  ggvis,
+  rpart.plot,
   ggmap, #for plotting maps
   RColorBrewer, #provide pretty colour palettes
   lubridate, #for converting time variables into date format
   hrbrthemes, #for more style themes
   data.table, #for working with data.table
-  dplyr, #for count function
   tidytext, #for text mining functions such as unnest()
   wordcloud,
   tm, #for removing stopwords
@@ -28,8 +29,7 @@ pacman::p_load(
   prismatic, #for color handling in plots
   gganimate, #for animated plots
   gifski, #for rendering animated plots as GIFs instead of single frames
-  knitr,
-  caret,
+  knitr
 )
 
 
@@ -56,16 +56,26 @@ games$tie[is.na(games$tie)] <- 0
 games$winners <- ifelse(games$tie == 1, "No Winner", games$winners)
 games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
 games$home_win <- as.factor(games$home_win)
- 
 
-# Training and test dataset  
-games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE)
-games_train <- games[games_index,]
-games_test <- games[-games_index,]
+games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss)
+games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss)
+ 
+games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss)
+games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss)
+
 
 str(games)
 
+summary(games_train)
 
+# Training and test dataset  
+games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
+
+games_train <- games[games_index,]
+games_train[ ,c('year', 'week', 'away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+
+games_test <- games[-games_index,]
+games_test[ ,c('year', 'week', 'away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 ```
 
@@ -156,11 +166,11 @@ set.seed(356)
 ## SVM (Support Vector Machine)
 ```{r}
 
-model_svm<- train(games_train[, 1:12], games_train[, 13], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,1:12])
+model_svm<- train(games_train[, 1:7], games_train[, 8], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,1:7])
 
 # Confusion matrix 
-confusionMatrix(predictions_svm, games_test[,13], positive = "1")
+confusionMatrix(predictions_svm, games_test[,8], positive = "1")
 
 varimp_svm <- varImp(model_svm)
 plot(varimp_svm, main="Variable Importance with support vector machine classifier")
