@@ -224,6 +224,8 @@ games_test[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleti
 
 #Decision tree
 model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rf') #preProcess=c("center", "scale")
+plot(model_dt)
+
 predictions_dt <- predict(object = model_dt, games_test[,3:8])
 
 # Confusion matrix 
@@ -234,7 +236,7 @@ varimp_dt <- varImp(model_dt)
 plot(varimp_dt, main="Variable Importance with decision tree classifier")
 
 #Let's take a look at how the decision tree that the model has used to predict ended up looking!
-prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
+pr(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
 
 
 tree_func <- function(final_model,  
@@ -293,4 +295,10 @@ tree_num <- which(model_dt$finalModel$forest$ndbigtree == min(model_dt$finalMode
 tree_func(final_model = model_dt$finalModel, tree_num)
 ```
 
+```{r}
+
+model_rf <- randomForest(margin~., data = model.matrix(games))
+
+plot(model_rf)
+```
 
