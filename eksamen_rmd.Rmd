@@ -1,14 +1,17 @@
 ---
-title: "NFL Data"
+title: "Research on NFL data"
 author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic)"
-date: "11/2/2021"
+date: "21/11/2021"
 output: html_document
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Always run this
+## 1 Introduction
+## 2 Theory
+## 3 Data
+
 ```{r}
 
 pacman::p_load(
@@ -42,7 +45,7 @@ pacman::p_load(
 ```
 
 
-### Data cleaning
+### 3.1 Data cleaning
 ```{r}
 
 standings <- read.csv("standings.csv")
@@ -92,8 +95,10 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 ```
 
 
+## 4 Hypotheses
 
-### EDA 
+## 5 Analysis
+### 5.1 EDA 
 ```{r}
 #Subset of SB-Winners
 sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
@@ -103,7 +108,7 @@ sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
 sb_winners %>% 
   ggplot(aes(x = year, y = wins)) + 
   geom_line() +
-  labs(title = "Regular season wins by SB-sinners 2000-2019", x = "Year", y = "Games won") +
+  labs(title = "Regular season wins by SB-winners 2000-2019", x = "Year", y = "Games won") +
   theme_linedraw() + 
   theme(plot.title = element_text(hjust = 0.5))
 
@@ -139,7 +144,7 @@ games %>%
 
 
 
-### Wordcloud
+#### 5.1.1 Wordcloud
 ```{r}
 #Dataset of only winners of games
 
@@ -160,14 +165,14 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 
 
-### Prediction models
+### 5.2 Prediction models
 ```{r}
 set.seed(356)
 ```
 
 
 
-## Naive Bayes
+#### 5.2.1 Naive Bayes
 ```{r}
 model_nb <- train(games_train[, 3:11], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb <- predict(object = model_nb, games_test[,3:11])
@@ -181,7 +186,7 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 
 
 
-## SVM (Support Vector Machine)
+#### 5.2.2 SVM (Support Vector Machine)
 ```{r}
 
 
@@ -198,7 +203,7 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 
 ```
 
-## K-nearest neighbour
+#### 5.2.3 K-nearest neighbour
 ```{r}
 # Train a model using KNN algorithm
 model_knn_norm <- train(games_train[, 3:11], games_train[, 2], method = 'knn',preProcess = c("range")) 
@@ -214,7 +219,7 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 
 ```
 
-## Decision tree
+#### 5.2.4 Decision tree
 ```{r}
 
 games_train[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleting variables
