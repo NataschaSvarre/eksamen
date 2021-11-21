@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1 Introduction
 ## 2 Theory
-## 3 Data
+## 3 Data 
 
 ```{r}
 
