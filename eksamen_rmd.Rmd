@@ -46,17 +46,18 @@ pacman::p_load(
 
 
 ### 3.1 Data cleaning
-```{r}
 
+#### 3.1.1 Data on NFL season standings 2000-2019
+```{r}
 standings <- read.csv("standings.csv")
 standings$team <- NULL
 
 head(standings)
 str(standings) # Dispalys the structure of our data.
+```
 
-
-
-
+#### 3.1.2 Data on NFL game results 2000-2019
+```{r}
 games <- read.csv("games.csv")
 games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city', 'year', 'week')] <- list(NULL) #deleting irrelavent variables
@@ -142,19 +143,13 @@ games %>%
 ```
 
 
-
-
 #### 5.1.1 Wordcloud
 ```{r}
-#Dataset of only winners of games
-
-library(RColorBrewer)         
-library(wordcloud)  
-
+#Creating dataset of only winners of games
 game_winners <- games["winners"] %>% 
-  group_by(winners) %>% #grouping each word so that we can count number of times the word appears below
-  mutate(total_wins = n()) %>% #counting number of times the word appears
-  ungroup() %>% #ungrouping the words again
+  group_by(winners) %>% 
+  mutate(total_wins = n()) %>% 
+  ungroup() %>% 
   count(winners, sort = TRUE)
 
 wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
@@ -171,7 +166,6 @@ set.seed(356)
 ```
 
 
-
 #### 5.2.1 Naive Bayes
 ```{r}
 model_nb <- train(games_train[, 3:11], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
@@ -183,7 +177,6 @@ confusionMatrix(predictions_nb, games_test[,2], positive = "1")
 varimp_nb <- varImp(model_nb)
 plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 ```
-
 
 
 #### 5.2.2 SVM (Support Vector Machine)
@@ -203,6 +196,7 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 
 ```
 
+
 #### 5.2.3 K-nearest neighbour
 ```{r}
 # Train a model using KNN algorithm
@@ -218,6 +212,7 @@ varimp_knn_norm <- varImp(model_knn_norm)
 plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifier")
 
 ```
+
 
 #### 5.2.4 Decision tree
 ```{r}
