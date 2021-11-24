@@ -69,8 +69,7 @@ games$home_win <- as.factor(games$home_win)
 
 games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss) #creating variable: home team points
 games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss) #creating variable: away team points 
-games$pts_home_margin <- games$pts_home - games$pts_away                     #creating variable: home team points margin
- 
+
 games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss) #creating variable: home team yards
 games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss) #creating variable: away team yards
 games$yds_home_margin <- games$yds_home - games$yds_away                     #creating variable: home team yards margin
@@ -160,16 +159,18 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 
 
-### 5.2 Prediction models
+### 6 Prediction models
 ```{r}
+RNGkind(sample.kind = "Rounding")
 set.seed(356)
 ```
 
+#### 6.1 Games dataset
 
-#### 5.2.1 Naive Bayes
+#### 6.1.1 Naive Bayes
 ```{r}
-model_nb <- train(games_train[, 3:11], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
-predictions_nb <- predict(object = model_nb, games_test[,3:11])
+model_nb <- train(games_train[, 3:10], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb <- predict(object = model_nb, games_test[,3:10])
 
 # Confusion matrix 
 confusionMatrix(predictions_nb, games_test[,2], positive = "1")
@@ -179,12 +180,11 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 ```
 
 
-#### 5.2.2 SVM (Support Vector Machine)
+#### 6.1.2 SVM (Support Vector Machine)
 ```{r}
 
-
-model_svm<- train(games_train[, 3:11], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,3:11])
+model_svm<- train(games_train[, 3:10], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,3:10])
 
 # Confusion matrix 
 confusionMatrix(predictions_svm, games_test[,2], positive = "1")
@@ -193,17 +193,16 @@ varimp_svm <- varImp(model_svm)
 plot(varimp_svm, main="Variable Importance with support vector machine classifier")
 
 
-
 ```
 
 
-#### 5.2.3 K-nearest neighbour
+#### 6.1.3 K-nearest neighbour
 ```{r}
 # Train a model using KNN algorithm
-model_knn_norm <- train(games_train[, 3:11], games_train[, 2], method = 'knn',preProcess = c("range")) 
+model_knn_norm <- train(games_train[, 3:10], games_train[, 2], method = 'knn',preProcess = c("range")) 
  
 # Predict the labels of the test set
-predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:11]) #the first 11 variables
+predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:10]) #the first 11 variables
 
 # Confusion matrix 
 confusionMatrix(predictions_knn_norm, games_test[,2], positive = "1") #the 12th variable is our outcome/predictive variable
@@ -214,19 +213,13 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 ```
 
 
-#### 5.2.4 Decision tree
+#### 6.1.4 Decision tree
 ```{r}
 
-games_train[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleting variables
-games_test[ ,c('pts_home', 'pts_away', 'pts_home_margin')] <- list(NULL) #deleting variables
-
-
-
 #Decision tree
-model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rf') #preProcess=c("center", "scale")
-plot(model_dt)
+model_dt <- train(games_train[, 3:10], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
 
-predictions_dt <- predict(object = model_dt, games_test[,3:8])
+predictions_dt <- predict(object = model_dt, games_test[,3:10])
 
 # Confusion matrix 
 confusionMatrix(predictions_dt, games_test[,2], positive = "1")
@@ -236,76 +229,26 @@ varimp_dt <- varImp(model_dt)
 plot(varimp_dt, main="Variable Importance with decision tree classifier")
 
 #Let's take a look at how the decision tree that the model has used to predict ended up looking!
-pr(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
+prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
 
-
-tree_func <- function(final_model,  
-                      tree_num) {
-  
-  # get tree by index
-  tree <- randomForest::getTree(final_model, 
-                                k = tree_num, 
-                                labelVar = TRUE) %>%
-    tibble::rownames_to_column() %>%
-    # make leaf split points to NA, so the 0s won't get plotted
-    mutate(`split point` = ifelse(is.na(prediction), `split point`, NA))
-  
-  # prepare data frame for graph
-  graph_frame <- data.frame(from = rep(tree$rowname, 2),
-                            to = c(tree$`left daughter`, tree$`right daughter`))
-  
-  # convert to graph and delete the last node that we don't want to plot
-  graph <- graph_from_data_frame(graph_frame) %>%
-    delete_vertices("0")
-  
-  # set node labels
-  V(graph)$node_label <- gsub("_", " ", as.character(tree$`split var`))
-  V(graph)$leaf_label <- as.character(tree$prediction)
-  V(graph)$split <- as.character(round(tree$`split point`, digits = 2))
-  
-  # plot
-  plot <- ggraph(graph, 'dendrogram') + 
-    theme_bw() +
-    geom_edge_link() +
-    geom_node_point() +
-    geom_node_text(aes(label = node_label), na.rm = TRUE, repel = TRUE) +
-    geom_node_label(aes(label = split), vjust = 2.5, na.rm = TRUE, fill = "white") +
-    geom_node_label(aes(label = leaf_label, fill = leaf_label), na.rm = TRUE, 
-					repel = TRUE, colour = "white", fontface = "bold", show.legend = FALSE) +
-    theme(panel.grid.minor = element_blank(),
-          panel.grid.major = element_blank(),
-          panel.background = element_blank(),
-          plot.background = element_rect(fill = "white"),
-          panel.border = element_blank(),
-          axis.line = element_blank(),
-          axis.text.x = element_blank(),
-          axis.text.y = element_blank(),
-          axis.ticks = element_blank(),
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank(),
-          plot.title = element_text(size = 18))
-  
-  print(plot)
-}
-
-
-
-tree_num <- which(model_dt$finalModel$forest$ndbigtree == min(model_dt$finalModel$forest$ndbigtree))
-
-tree_func(final_model = model_dt$finalModel, tree_num)
-```
-
-```{r}
-
-model_rf <- randomForest(margin~., data = model.matrix(games))
-
-plot(model_rf)
 ```
 
 
 
 
-#### predictive models on standings dataset
+
+
+
+
+
+
+
+
+
+
+
+
+#### 6.2 Standings dataset (playoffs as success parameter)
 ```{r}
 standings[ ,c('year')] <- list(NULL) #deleting irrelavent variables
 
@@ -315,16 +258,27 @@ standings$sb_winner <- ifelse(standings$sb_winner == "Won Superbowl", 1 ,0)
 standings$playoffs <- as.factor(standings$playoffs)
 standings$sb_winner <- as.factor(standings$sb_winner)
 
-# Training and test dataset for standings
+
+```
+
+
+```{r}
+
+# Training and test dataset for standings with playoffs as success parameter
+
+standings$wins <- as.factor(standings$wins)
+
+
 standings_index <- createDataPartition(standings$playoffs, p=0.8, list=FALSE) #Index
 
 standings_train <- standings[standings_index,]
 
 standings_test <- standings[-standings_index,]
+```
 
 
-
-
+#### 6.2.1 Naive Bayes
+```{r}
 
 model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
@@ -334,5 +288,105 @@ confusionMatrix(predictions_nb2, standings_test[,12], positive = "1")
 
 varimp_nb2 <- varImp(model_nb2)
 plot(varimp_nb2, main="Variable Importance with naive bayes classifier")
+
+
+
+str(standings)
+
+
+HEY <- naive_bayes(playoffs ~ ., data = standings_train)
+HEY
+
 ```
+
+
+
+#### 6.2.2 SVM
+```{r}
+model_svm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm2 <- predict(object = model_svm2, standings_test[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_svm2, standings_test[,12], positive = "1")
+
+varimp_svm2 <- varImp(model_svm2)
+plot(varimp_svm2, main="Variable Importance with support vector machine classifier")
+```
+
+
+
+
+
+#### 6.2.3 KNN
+```{r}
+# Train a model using KNN algorithm
+model_knn_norm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'knn',preProcess = c("range")) 
+ 
+# Predict the labels of the test set
+predictions_knn_norm2 <- predict(object = model_knn_norm2, standings_test[,2:11]) #the first 11 variables
+
+# Confusion matrix 
+confusionMatrix(predictions_knn_norm2, standings_test[,12], positive = "1") #the 12th variable is our outcome/predictive variable
+
+varimp_knn_norm2 <- varImp(model_knn_norm2)
+plot(varimp_knn_norm2, main="Variable Importance with k-neares neighbor classifier")
+```
+
+
+
+
+#### 6.2.4 Decision tree
+```{r}
+#Decision tree
+model_dt2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'rpart') #preProcess=c("center", "scale")
+
+predictions_dt2 <- predict(object = model_dt2, standings_test[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_dt2, standings_test[,12], positive = "1")
+
+#Variable importance plot
+varimp_dt2 <- varImp(model_dt2)
+plot(varimp_dt2, main="Variable Importance with decision tree classifier")
+
+#Let's take a look at how the decision tree that the model has used to predict ended up looking!
+prp(model_dt2$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
+```
+
+
+
+model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### 6.3 Standings dataset (winning superbowl as success parameter)
+```{r}
+# Training and test dataset for standings with playoffs as success parameter
+standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) #Index
+
+standings_train2 <- standings[standings_index2,]
+
+standings_test2 <- standings[-standings_index2,]
+```
+
+#### 6.3.1 Naive Bayes
+
+#### 6.3.2 SVM
+
+#### 6.3.3 KNN
+
+#### 6.3.4 Decision tree
 
