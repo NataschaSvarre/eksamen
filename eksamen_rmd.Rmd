@@ -165,34 +165,24 @@ reg2 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+ma
 summary(reg2)
 
 
-
-
-reg3 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking+L(playoffs, 1), data = standings)
-
-summary(reg3)
 ```
 
 #### 5.2.3 Standings dataset (Super Bowl win as success)
 ```{r}
-reg4 <- lm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+reg3 <- lm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
 
-summary(reg4)
-
-
-reg5 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
-
-summary(reg5) #hypothesis 5
+summary(reg3)
 
 
+reg4 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
 
-
-
+summary(reg4) #hypothesis 5
 
 
 ```
 
 
-
+ 
 ## 6 Prediction models
 ```{r}
 RNGkind(sample.kind = "Rounding")
