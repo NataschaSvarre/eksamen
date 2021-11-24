@@ -38,7 +38,8 @@ pacman::p_load(
   tree,
   devtools,
   plotrix,
-  reprtree
+  reprtree, 
+  dynlm
 )
 
 
@@ -51,7 +52,13 @@ pacman::p_load(
 ```{r}
 standings <- read.csv("standings.csv")
 standings <- as.data.frame(standings)
-standings$team <- NULL
+
+sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ] #Subset of data including only SB-winners
+
+standings[ ,c('year', 'team')] <- list(NULL) #deleting irrelavent variables
+
+standings$playoffs <- ifelse(standings$playoffs == "Playoffs", 1 ,0)
+standings$sb_winner <- ifelse(standings$sb_winner == "Won Superbowl", 1 ,0)
 
 str(standings)
 ```
@@ -66,32 +73,20 @@ games$tie <- ifelse(games$tie == "NA", 0 ,1)
 games$tie[is.na(games$tie)] <- 0
 games$winners <- ifelse(games$tie == 1, "No Winner", games$winners)
 games$home_win <- ifelse(games$winners == games$home_team_name ,1,0)
-games$home_win <- as.factor(games$home_win)
 
 games$pts_home <- ifelse(games$home_win == 1, games$pts_win, games$pts_loss) #creating variable: home team points
 games$pts_away <- ifelse(games$home_win == 0, games$pts_win, games$pts_loss) #creating variable: away team points 
 
 games$yds_home <- ifelse(games$home_win == 1, games$yds_win, games$yds_loss) #creating variable: home team yards
 games$yds_away <- ifelse(games$home_win == 0, games$yds_win, games$yds_loss) #creating variable: away team yards
-games$yds_home_margin <- games$yds_home - games$yds_away                     #creating variable: home team yards margin
 
 games$turnovers_home <- ifelse(games$home_win == 1, games$turnovers_win, games$turnovers_loss) #creating variable: home team turnovers
 games$turnovers_away <- ifelse(games$home_win == 0, games$turnovers_win, games$turnovers_loss) #creating variable: away team turnovers
-games$turnovers_home_margin <- games$turnovers_home - games$turnovers_away                     #creating variable: home team turnovers margin
 
 games[ ,c('pts_win', 'pts_loss', 'yds_win', 'yds_loss', 'turnovers_win', 'turnovers_loss')] <- list(NULL) #deleting old variables
 
 str(games)
 
-
-# Training and test dataset  
-games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
-
-games_train <- games[games_index,]
-games_train[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
-
-games_test <- games[-games_index,]
-games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 ```
 
@@ -101,9 +96,6 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 ## 5 Analysis
 ### 5.1 EDA 
 ```{r}
-#Subset of SB-Winners
-sb_winners <- standings[ which(standings$sb_winner=="Won Superbowl"), ]
-
 
 #Barplot of wins in regular season by the SB-winner 2000-2019
 sb_winners %>% 
@@ -158,30 +150,74 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 ```
 
 
-
+### 5.2 Regression models
+#### 5.2.1 Games dataset
 ```{r}
-reg <- lm(home_win ~ pts_home+pts_away+yds_home+yds_away+yds_home_margin+turnovers_home+turnovers_away+turnovers_home_margin, data = games)
+reg <- lm(home_win ~ pts_home+pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games)
 
 summary(reg)
 ```
 
+#### 5.2.2 Standings dataset (playoff as succes)
+```{r}
+reg2 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+
+summary(reg2)
+
+
+
+
+reg3 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking+L(playoffs, 1), data = standings)
+
+summary(reg3)
+```
+
+#### 5.2.3 Standings dataset (Super Bowl win as success)
+```{r}
+reg4 <- lm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+
+summary(reg4)
+
+
+reg5 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
+
+summary(reg5) #hypothesis 5
 
 
 
 
 
-### 6 Prediction models
+
+
+```
+
+
+
+## 6 Prediction models
 ```{r}
 RNGkind(sample.kind = "Rounding")
 set.seed(356)
+
+
+games$home_win <- as.factor(games$home_win)
+
+# Training and test dataset  
+games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
+
+games_train <- games[games_index,]
+games_train[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+
+games_test <- games[-games_index,]
+games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+
 ```
 
-#### 6.1 Games dataset
+### 6.1 Games dataset
 
 #### 6.1.1 Naive Bayes
 ```{r}
-model_nb <- train(games_train[, 3:10], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
-predictions_nb <- predict(object = model_nb, games_test[,3:10])
+model_nb <- train(games_train[, 3:8], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb <- predict(object = model_nb, games_test[,3:8])
 
 # Confusion matrix 
 confusionMatrix(predictions_nb, games_test[,2], positive = "1")
@@ -194,8 +230,8 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 #### 6.1.2 SVM (Support Vector Machine)
 ```{r}
 
-model_svm<- train(games_train[, 3:10], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,3:10])
+model_svm<- train(games_train[, 3:8], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,3:8])
 
 # Confusion matrix 
 confusionMatrix(predictions_svm, games_test[,2], positive = "1")
@@ -210,10 +246,10 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 #### 6.1.3 K-nearest neighbour
 ```{r}
 # Train a model using KNN algorithm
-model_knn_norm <- train(games_train[, 3:10], games_train[, 2], method = 'knn',preProcess = c("range")) 
+model_knn_norm <- train(games_train[, 3:8], games_train[, 2], method = 'knn',preProcess = c("range")) 
  
 # Predict the labels of the test set
-predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:10]) #the first 11 variables
+predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:8]) #the first 11 variables
 
 # Confusion matrix 
 confusionMatrix(predictions_knn_norm, games_test[,2], positive = "1") #the 12th variable is our outcome/predictive variable
@@ -228,9 +264,9 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 ```{r}
 
 #Decision tree
-model_dt <- train(games_train[, 3:10], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
+model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
 
-predictions_dt <- predict(object = model_dt, games_test[,3:10])
+predictions_dt <- predict(object = model_dt, games_test[,3:8])
 
 # Confusion matrix 
 confusionMatrix(predictions_dt, games_test[,2], positive = "1")
@@ -259,12 +295,8 @@ prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" paramet
 
 
 
-#### 6.2 Standings dataset (playoffs as success parameter)
+### 6.2 Standings dataset (playoffs as success parameter)
 ```{r}
-standings[ ,c('year')] <- list(NULL) #deleting irrelavent variables
-
-standings$playoffs <- ifelse(standings$playoffs == "Playoffs", 1 ,0)
-standings$sb_winner <- ifelse(standings$sb_winner == "Won Superbowl", 1 ,0)
 
 standings$playoffs <- as.factor(standings$playoffs)
 standings$sb_winner <- as.factor(standings$sb_winner)
@@ -379,7 +411,7 @@ prp(model_dt2$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parame
 
 
 
-#### 6.3 Standings dataset (winning superbowl as success parameter)
+### 6.3 Standings dataset (winning superbowl as success parameter)
 ```{r}
 # Training and test dataset for standings with playoffs as success parameter
 standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) #Index
@@ -439,7 +471,6 @@ confusionMatrix(predictions_knn_norm3, standings_test2[,13], positive = "1") #th
 varimp_knn_norm3 <- varImp(model_knn_norm3)
 plot(varimp_knn_norm3, main="Variable Importance with k-neares neighbor classifier")
 ```
-
 
 
 
