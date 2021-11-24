@@ -355,8 +355,7 @@ prp(model_dt2$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parame
 
 
 
-model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
-predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
+
 
 
 
@@ -383,6 +382,28 @@ standings_test2 <- standings[-standings_index2,]
 ```
 
 #### 6.3.1 Naive Bayes
+```{r}
+model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb3 <- predict(object = model_nb3, standings_test2[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_nb3, standings_test2[,12], positive = "1")
+
+varimp_nb3 <- varImp(model_nb3)
+plot(varimp_nb3, main="Variable Importance with naive bayes classifier")
+
+
+
+str(standings)
+
+
+HEY <- naive_bayes(playoffs ~ ., data = standings_train)
+HEY
+```
+
+
+model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
 
 #### 6.3.2 SVM
 
