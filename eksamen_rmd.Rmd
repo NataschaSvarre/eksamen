@@ -50,15 +50,16 @@ pacman::p_load(
 #### 3.1.1 Data on NFL season standings 2000-2019
 ```{r}
 standings <- read.csv("standings.csv")
+standings <- as.data.frame(standings)
 standings$team <- NULL
 
-head(standings)
-str(standings) # Dispalys the structure of our data.
+str(standings)
 ```
 
 #### 3.1.2 Data on NFL game results 2000-2019
 ```{r}
 games <- read.csv("games.csv")
+games <- as.data.frame(games)
 games$winners <- stringr::word(games$winner, -1)
 games[ ,c('winner', 'home_team', 'away_team', 'day', 'date', 'time', 'home_team_city', 'away_team_city', 'year', 'week')] <- list(NULL) #deleting irrelavent variables
 games$tie <- ifelse(games$tie == "NA", 0 ,1)
@@ -155,6 +156,16 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
           max.words=200, random.order=FALSE, rot.per=0.3, 
           colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 ```
+
+
+
+```{r}
+reg <- lm(home_win ~ pts_home+pts_away+yds_home+yds_away+yds_home_margin+turnovers_home+turnovers_away+turnovers_home_margin, data = games)
+
+summary(reg)
+```
+
+
 
 
 
@@ -265,9 +276,6 @@ standings$sb_winner <- as.factor(standings$sb_winner)
 ```{r}
 
 # Training and test dataset for standings with playoffs as success parameter
-
-standings$wins <- as.factor(standings$wins)
-
 
 standings_index <- createDataPartition(standings$playoffs, p=0.8, list=FALSE) #Index
 
@@ -383,11 +391,11 @@ standings_test2 <- standings[-standings_index2,]
 
 #### 6.3.1 Naive Bayes
 ```{r}
-model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb3 <- predict(object = model_nb3, standings_test2[,2:11])
 
 # Confusion matrix 
-confusionMatrix(predictions_nb3, standings_test2[,12], positive = "1")
+confusionMatrix(predictions_nb3, standings_test2[,13], positive = "1")
 
 varimp_nb3 <- varImp(model_nb3)
 plot(varimp_nb3, main="Variable Importance with naive bayes classifier")
@@ -402,12 +410,58 @@ HEY
 ```
 
 
-model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
-predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
-
 #### 6.3.2 SVM
+```{r}
+model_svm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm3 <- predict(object = model_svm3, standings_test2[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_svm3, standings_test2[,13], positive = "1")
+
+varimp_svm3 <- varImp(model_svm3)
+plot(varimp_svm3, main="Variable Importance with support vector machine classifier")
+```
+
+
+
 
 #### 6.3.3 KNN
+```{r}
+# Train a model using KNN algorithm
+model_knn_norm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'knn',preProcess = c("range")) 
+ 
+# Predict the labels of the test set
+predictions_knn_norm3 <- predict(object = model_knn_norm3, standings_test2[,2:11]) #the first 11 variables
+
+# Confusion matrix 
+confusionMatrix(predictions_knn_norm3, standings_test2[,13], positive = "1") #the 12th variable is our outcome/predictive variable
+
+varimp_knn_norm3 <- varImp(model_knn_norm3)
+plot(varimp_knn_norm3, main="Variable Importance with k-neares neighbor classifier")
+```
+
+
+
 
 #### 6.3.4 Decision tree
+```{r}
+#Decision tree
+model_dt3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'rpart') #preProcess=c("center", "scale")
+
+predictions_dt3 <- predict(object = model_dt3, standings_test2[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_dt3, standings_test2[,13], positive = "1")
+
+#Variable importance plot
+varimp_dt3 <- varImp(model_dt3)
+plot(varimp_dt3, main="Variable Importance with decision tree classifier")
+
+#Let's take a look at how the decision tree that the model has used to predict ended up looking!
+prp(model_dt3$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
+```
+
+
+
+
 
