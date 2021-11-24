@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## 2 Theory
 ## 3 Data 
 
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 pacman::p_load(
   tidyverse, #tidyverse includes ggplot2, dplyr, forcats and more. 
@@ -49,7 +49,7 @@ pacman::p_load(
 ### 3.1 Data cleaning
 
 #### 3.1.1 Data on NFL season standings 2000-2019
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 standings <- read.csv("standings.csv")
 standings <- as.data.frame(standings)
 
@@ -64,7 +64,7 @@ str(standings)
 ```
 
 #### 3.1.2 Data on NFL game results 2000-2019
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 games <- read.csv("games.csv")
 games <- as.data.frame(games)
 games$winners <- stringr::word(games$winner, -1)
@@ -95,7 +95,7 @@ str(games)
 
 ## 5 Analysis
 ### 5.1 EDA 
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 #Barplot of wins in regular season by the SB-winner 2000-2019
 sb_winners %>% 
@@ -136,7 +136,7 @@ games %>%
 
 
 #### 5.1.1 Wordcloud
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 #Creating dataset of only winners of games
 game_winners <- games["winners"] %>% 
   group_by(winners) %>% 
@@ -152,14 +152,14 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 ### 5.2 Regression models
 #### 5.2.1 Games dataset
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 reg <- lm(home_win ~ pts_home+pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games)
 
 summary(reg)
 ```
 
 #### 5.2.2 Standings dataset (playoff as succes)
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 reg2 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
 
 summary(reg2)
@@ -168,7 +168,7 @@ summary(reg2)
 ```
 
 #### 5.2.3 Standings dataset (Super Bowl win as success)
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 reg3 <- lm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
 
 summary(reg3)
@@ -184,7 +184,7 @@ summary(reg4) #hypothesis 5
 
  
 ## 6 Prediction models
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 RNGkind(sample.kind = "Rounding")
 set.seed(356)
 
@@ -205,7 +205,7 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 ### 6.1 Games dataset
 
 #### 6.1.1 Naive Bayes
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_nb <- train(games_train[, 3:8], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb <- predict(object = model_nb, games_test[,3:8])
 
@@ -218,7 +218,7 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 
 
 #### 6.1.2 SVM (Support Vector Machine)
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 model_svm<- train(games_train[, 3:8], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
 predictions_svm <- predict(object = model_svm, games_test[,3:8])
@@ -234,7 +234,7 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 
 
 #### 6.1.3 K-nearest neighbour
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm <- train(games_train[, 3:8], games_train[, 2], method = 'knn',preProcess = c("range")) 
  
@@ -251,7 +251,7 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 
 
 #### 6.1.4 Decision tree
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 #Decision tree
 model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
@@ -286,7 +286,7 @@ prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" paramet
 
 
 ### 6.2 Standings dataset (playoffs as success parameter)
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 standings$playoffs <- as.factor(standings$playoffs)
 standings$sb_winner <- as.factor(standings$sb_winner)
@@ -295,7 +295,7 @@ standings$sb_winner <- as.factor(standings$sb_winner)
 ```
 
 
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 # Training and test dataset for standings with playoffs as success parameter
 
@@ -308,7 +308,7 @@ standings_test <- standings[-standings_index,]
 
 
 #### 6.2.1 Naive Bayes
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
@@ -332,7 +332,7 @@ HEY
 
 
 #### 6.2.2 SVM
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_svm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
 predictions_svm2 <- predict(object = model_svm2, standings_test[,2:11])
 
@@ -348,7 +348,7 @@ plot(varimp_svm2, main="Variable Importance with support vector machine classifi
 
 
 #### 6.2.3 KNN
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'knn',preProcess = c("range")) 
  
@@ -366,7 +366,7 @@ plot(varimp_knn_norm2, main="Variable Importance with k-neares neighbor classifi
 
 
 #### 6.2.4 Decision tree
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 #Decision tree
 model_dt2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'rpart') #preProcess=c("center", "scale")
 
@@ -402,7 +402,7 @@ prp(model_dt2$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parame
 
 
 ### 6.3 Standings dataset (winning superbowl as success parameter)
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Training and test dataset for standings with playoffs as success parameter
 standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) #Index
 
@@ -412,7 +412,7 @@ standings_test2 <- standings[-standings_index2,]
 ```
 
 #### 6.3.1 Naive Bayes
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'naive_bayes')  #preProcess=c("center", "scale") 
 predictions_nb3 <- predict(object = model_nb3, standings_test2[,2:11])
 
@@ -433,7 +433,7 @@ HEY
 
 
 #### 6.3.2 SVM
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_svm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
 predictions_svm3 <- predict(object = model_svm3, standings_test2[,2:11])
 
@@ -448,7 +448,7 @@ plot(varimp_svm3, main="Variable Importance with support vector machine classifi
 
 
 #### 6.3.3 KNN
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'knn',preProcess = c("range")) 
  
@@ -463,9 +463,8 @@ plot(varimp_knn_norm3, main="Variable Importance with k-neares neighbor classifi
 ```
 
 
-
 #### 6.3.4 Decision tree
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 #Decision tree
 model_dt3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'rpart') #preProcess=c("center", "scale")
 
@@ -481,6 +480,7 @@ plot(varimp_dt3, main="Variable Importance with decision tree classifier")
 #Let's take a look at how the decision tree that the model has used to predict ended up looking!
 prp(model_dt3$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
 ```
+
 
 
 
