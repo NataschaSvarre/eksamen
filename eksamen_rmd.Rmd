@@ -302,3 +302,37 @@ model_rf <- randomForest(margin~., data = model.matrix(games))
 plot(model_rf)
 ```
 
+
+
+
+#### predictive models on standings dataset
+```{r}
+standings[ ,c('year')] <- list(NULL) #deleting irrelavent variables
+
+standings$playoffs <- ifelse(standings$playoffs == "Playoffs", 1 ,0)
+standings$sb_winner <- ifelse(standings$sb_winner == "Won Superbowl", 1 ,0)
+
+standings$playoffs <- as.factor(standings$playoffs)
+standings$sb_winner <- as.factor(standings$sb_winner)
+
+# Training and test dataset for standings
+standings_index <- createDataPartition(standings$playoffs, p=0.8, list=FALSE) #Index
+
+standings_train <- standings[standings_index,]
+
+standings_test <- standings[-standings_index,]
+
+
+
+
+
+model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
+
+# Confusion matrix 
+confusionMatrix(predictions_nb2, standings_test[,12], positive = "1")
+
+varimp_nb2 <- varImp(model_nb2)
+plot(varimp_nb2, main="Variable Importance with naive bayes classifier")
+```
+
