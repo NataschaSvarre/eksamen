@@ -158,8 +158,6 @@ summary(reg)
 reg2 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
 
 summary(reg2)
-
-
 ```
 
 #### 5.2.3 Standings dataset (Super Bowl win as success)
@@ -172,8 +170,6 @@ summary(reg3)
 reg4 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
 
 summary(reg4) #hypothesis 5
-
-
 ```
 
 
@@ -190,10 +186,10 @@ games$home_win <- as.factor(games$home_win)
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
 
 games_train <- games[games_index,]
-games_train[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+games_train[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- list(NULL)
 
 games_test <- games[-games_index,]
-games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- list(NULL)
 
 ```
 
@@ -201,8 +197,10 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 #### 6.1.1 Naive Bayes
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-model_nb <- train(games_train[, 3:8], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
-predictions_nb <- predict(object = model_nb, games_test[,3:8])
+
+
+model_nb <- train(games_train[, 3:7], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+predictions_nb <- predict(object = model_nb, games_test[,3:7])
 
 # Confusion matrix 
 confusionMatrix(predictions_nb, games_test[,2], positive = "1")
@@ -215,8 +213,8 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 #### 6.1.2 SVM (Support Vector Machine)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
-model_svm<- train(games_train[, 3:8], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
-predictions_svm <- predict(object = model_svm, games_test[,3:8])
+model_svm<- train(games_train[, 3:7], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+predictions_svm <- predict(object = model_svm, games_test[,3:7])
 
 # Confusion matrix 
 confusionMatrix(predictions_svm, games_test[,2], positive = "1")
@@ -231,10 +229,10 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 #### 6.1.3 K-nearest neighbour
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
-model_knn_norm <- train(games_train[, 3:8], games_train[, 2], method = 'knn',preProcess = c("range")) 
+model_knn_norm <- train(games_train[, 3:7], games_train[, 2], method = 'knn',preProcess = c("range")) 
  
 # Predict the labels of the test set
-predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:8]) #the first 11 variables
+predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:7]) #the first 11 variables
 
 # Confusion matrix 
 confusionMatrix(predictions_knn_norm, games_test[,2], positive = "1") #the 12th variable is our outcome/predictive variable
@@ -249,9 +247,9 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 #Decision tree
-model_dt <- train(games_train[, 3:8], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
+model_dt <- train(games_train[, 3:7], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
 
-predictions_dt <- predict(object = model_dt, games_test[,3:8])
+predictions_dt <- predict(object = model_dt, games_test[,3:7])
 
 # Confusion matrix 
 confusionMatrix(predictions_dt, games_test[,2], positive = "1")
@@ -479,5 +477,11 @@ prp(model_dt3$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parame
 
 
 
+
+
+
+## 7 Results
+
+## 8 Conclusion 
 
 
