@@ -4,7 +4,7 @@ author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic)"
 date: "21/11/2021"
 output: html_document
 ---
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## 1 Introduction
 ## 2 Theory
 ## 3 Data
-```{r}
+```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 pacman::p_load(
   tidyverse, #tidyverse includes ggplot2, dplyr, forcats and more. 
   caret, 
