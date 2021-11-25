@@ -247,7 +247,7 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 #Decision tree
-model_dt <- train(games_train[, 3:7], games_train[, 2], method = 'rpart') #preProcess=c("center", "scale")
+model_dt <- train(games_train[, 3:7], games_train[, 2], method = 'rpart')
 
 predictions_dt <- predict(object = model_dt, games_test[,3:7])
 
@@ -303,7 +303,7 @@ standings_test <- standings[-standings_index,]
 #### 6.2.1 Naive Bayes
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
-model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')
 predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
 
 # Confusion matrix 
@@ -326,7 +326,7 @@ HEY
 
 #### 6.2.2 SVM
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-model_svm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+model_svm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'svmLinear')
 predictions_svm2 <- predict(object = model_svm2, standings_test[,2:11])
 
 # Confusion matrix 
@@ -343,7 +343,7 @@ plot(varimp_svm2, main="Variable Importance with support vector machine classifi
 #### 6.2.3 KNN
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
-model_knn_norm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'knn',preProcess = c("range")) 
+model_knn_norm2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'knn',preProcess = c("scale")) 
  
 # Predict the labels of the test set
 predictions_knn_norm2 <- predict(object = model_knn_norm2, standings_test[,2:11]) #the first 11 variables
@@ -361,7 +361,7 @@ plot(varimp_knn_norm2, main="Variable Importance with k-neares neighbor classifi
 #### 6.2.4 Decision tree
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 #Decision tree
-model_dt2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'rpart') #preProcess=c("center", "scale")
+model_dt2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'rpart')
 
 predictions_dt2 <- predict(object = model_dt2, standings_test[,2:11])
 
@@ -406,7 +406,7 @@ standings_test2 <- standings[-standings_index2,]
 
 #### 6.3.1 Naive Bayes
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'naive_bayes')
 predictions_nb3 <- predict(object = model_nb3, standings_test2[,2:11])
 
 # Confusion matrix 
@@ -427,7 +427,7 @@ HEY
 
 #### 6.3.2 SVM
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-model_svm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+model_svm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'svmLinear') 
 predictions_svm3 <- predict(object = model_svm3, standings_test2[,2:11])
 
 # Confusion matrix 
@@ -443,7 +443,7 @@ plot(varimp_svm3, main="Variable Importance with support vector machine classifi
 #### 6.3.3 KNN
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
-model_knn_norm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'knn',preProcess = c("range")) 
+model_knn_norm3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'knn')
  
 # Predict the labels of the test set
 predictions_knn_norm3 <- predict(object = model_knn_norm3, standings_test2[,2:11]) #the first 11 variables
@@ -459,7 +459,7 @@ plot(varimp_knn_norm3, main="Variable Importance with k-neares neighbor classifi
 #### 6.3.4 Decision tree
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 #Decision tree
-model_dt3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'rpart') #preProcess=c("center", "scale")
+model_dt3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'rpart')
 
 predictions_dt3 <- predict(object = model_dt3, standings_test2[,2:11])
 
