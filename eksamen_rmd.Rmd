@@ -104,7 +104,7 @@ sb_winners %>%
 ggplot(data = sb_winners) + 
   geom_bar(aes(team_name)) + 
   theme_linedraw() + 
-  labs(title = "Number of Superbowl won pr team", x = "Teams", y = "SB won") +
+  labs(title = "Number of Superbowls won pr team", x = "Teams", y = "Super Bowl wins") +
   theme(plot.title = element_text(hjust = 0.5))
 
 #Barplot of total wins per team
