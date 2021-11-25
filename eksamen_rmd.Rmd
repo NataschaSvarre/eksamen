@@ -199,7 +199,7 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- li
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 
-model_nb <- train(games_train[, 3:7], games_train[, 2], method = 'naive_bayes')  #preProcess=c("center", "scale") 
+model_nb <- train(games_train[, 3:7], games_train[, 2], method = 'naive_bayes') 
 predictions_nb <- predict(object = model_nb, games_test[,3:7])
 
 # Confusion matrix 
@@ -213,7 +213,7 @@ plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 #### 6.1.2 SVM (Support Vector Machine)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
-model_svm<- train(games_train[, 3:7], games_train[, 2], method = 'svmLinear',preProcess=c("BoxCox")) #preProcess=c("center", "scale")
+model_svm<- train(games_train[, 3:7], games_train[, 2], method = 'svmLinear')
 predictions_svm <- predict(object = model_svm, games_test[,3:7])
 
 # Confusion matrix 
@@ -229,7 +229,7 @@ plot(varimp_svm, main="Variable Importance with support vector machine classifie
 #### 6.1.3 K-nearest neighbour
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
-model_knn_norm <- train(games_train[, 3:7], games_train[, 2], method = 'knn',preProcess = c("range")) 
+model_knn_norm <- train(games_train[, 3:7], games_train[, 2], method = 'knn', preProcess = c("range")) 
  
 # Predict the labels of the test set
 predictions_knn_norm <- predict(object = model_knn_norm, games_test[,3:7]) #the first 11 variables
