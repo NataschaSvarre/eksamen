@@ -114,7 +114,7 @@ ggplot(data = games) +
   labs(title = "Number of games won pr team", x = "Teams", y = "Games won") +
   theme(plot.title = element_text(hjust = 0.5)) + 
   coord_flip() 
-
+ 
 
 
   #Correlation between points and yards
