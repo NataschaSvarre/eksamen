@@ -35,7 +35,8 @@ pacman::p_load(
   naivebayes,
   devtools,
   plotrix,
-  dynlm
+  dynlm,
+  olsrr
 )
 ```
 
@@ -148,14 +149,23 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 ### 5.2 Regression models
 #### 5.2.1 Games dataset
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-reg <- lm(home_win ~ pts_home+pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games)
+
+games$home_win <- as.factor(games$home_win)
+
+
+
+reg <- glm(home_win ~ pts_home+pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games, family = "binomial")
+
+ols_vif_tol(reg)
 
 summary(reg)
 ```
 
 #### 5.2.2 Standings dataset (playoff as succes)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-reg2 <- lm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+reg2 <- glm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+
+ols_vif_tol(reg2)
 
 summary(reg2)
 ```
@@ -168,6 +178,8 @@ summary(reg3)
 
 
 reg4 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
+
+ols_vif_tol(reg4)
 
 summary(reg4) #hypothesis 5
 ```
