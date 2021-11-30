@@ -208,18 +208,10 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- li
 
 ### 6.1 Games dataset
 
-#### 6.1.1 Naive Bayes
+#### 6.1.1 Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 
-model_nb <- train(games_train[, 3:7], games_train[, 2], method = 'naive_bayes') 
-predictions_nb <- predict(object = model_nb, games_test[,3:7])
-
-# Confusion matrix 
-confusionMatrix(predictions_nb, games_test[,2], positive = "1")
-
-varimp_nb <- varImp(model_nb)
-plot(varimp_nb, main="Variable Importance with naive bayes classifier")
 ```
 
 
@@ -255,26 +247,6 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 
 ```
 
-
-#### 6.1.4 Decision tree
-```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-
-#Decision tree
-model_dt <- train(games_train[, 3:7], games_train[, 2], method = 'rpart')
-
-predictions_dt <- predict(object = model_dt, games_test[,3:7])
-
-# Confusion matrix 
-confusionMatrix(predictions_dt, games_test[,2], positive = "1")
-
-#Variable importance plot
-varimp_dt <- varImp(model_dt)
-plot(varimp_dt, main="Variable Importance with decision tree classifier")
-
-#Let's take a look at how the decision tree that the model has used to predict ended up looking!
-prp(model_dt$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
-
-```
 
 
 
@@ -313,25 +285,9 @@ standings_test <- standings[-standings_index,]
 ```
 
 
-#### 6.2.1 Naive Bayes
+#### 6.2.1 Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
-model_nb2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'naive_bayes')
-predictions_nb2 <- predict(object = model_nb2, standings_test[,2:11])
-
-# Confusion matrix 
-confusionMatrix(predictions_nb2, standings_test[,12], positive = "1")
-
-varimp_nb2 <- varImp(model_nb2)
-plot(varimp_nb2, main="Variable Importance with naive bayes classifier")
-
-
-
-str(standings)
-
-
-HEY <- naive_bayes(playoffs ~ ., data = standings_train)
-HEY
 
 ```
 
@@ -371,24 +327,6 @@ plot(varimp_knn_norm2, main="Variable Importance with k-neares neighbor classifi
 
 
 
-#### 6.2.4 Decision tree
-```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-#Decision tree
-model_dt2 <- train(standings_train[, 2:11], standings_train[, 12], method = 'rpart')
-
-predictions_dt2 <- predict(object = model_dt2, standings_test[,2:11])
-
-# Confusion matrix 
-confusionMatrix(predictions_dt2, standings_test[,12], positive = "1")
-
-#Variable importance plot
-varimp_dt2 <- varImp(model_dt2)
-plot(varimp_dt2, main="Variable Importance with decision tree classifier")
-
-#Let's take a look at how the decision tree that the model has used to predict ended up looking!
-prp(model_dt2$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
-```
-
 
 
 
@@ -417,24 +355,10 @@ standings_train2 <- standings[standings_index2,]
 standings_test2 <- standings[-standings_index2,]
 ```
 
-#### 6.3.1 Naive Bayes
+#### 6.3.1 Logistic Regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-model_nb3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'naive_bayes')
-predictions_nb3 <- predict(object = model_nb3, standings_test2[,2:11])
-
-# Confusion matrix 
-confusionMatrix(predictions_nb3, standings_test2[,13], positive = "1")
-
-varimp_nb3 <- varImp(model_nb3)
-plot(varimp_nb3, main="Variable Importance with naive bayes classifier")
 
 
-
-str(standings)
-
-
-HEY <- naive_bayes(playoffs ~ ., data = standings_train)
-HEY
 ```
 
 
@@ -469,25 +393,6 @@ plot(varimp_knn_norm3, main="Variable Importance with k-neares neighbor classifi
 ```
 
 
-#### 6.3.4 Decision tree
-```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-#Decision tree
-model_dt3 <- train(standings_train2[, 2:11], standings_train2[, 13], method = 'rpart')
-
-predictions_dt3 <- predict(object = model_dt3, standings_test2[,2:11])
-
-# Confusion matrix 
-confusionMatrix(predictions_dt3, standings_test2[,13], positive = "1")
-
-#Variable importance plot
-varimp_dt3 <- varImp(model_dt3)
-plot(varimp_dt3, main="Variable Importance with decision tree classifier")
-
-#Let's take a look at how the decision tree that the model has used to predict ended up looking!
-prp(model_dt3$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parameter controls text size, and "box.palette" controls node colour
-```
-
-
 
 
 
@@ -495,6 +400,6 @@ prp(model_dt3$finalModel, box.palette = "Reds", tweak = 1.2) #the "tweak" parame
 
 ## 7 Results
 
-## 8 Conclusion 
+
 
 
