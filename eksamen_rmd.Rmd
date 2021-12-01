@@ -170,11 +170,22 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 games$home_win <- as.factor(games$home_win)
 
-reg <- glm(home_win ~ pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games, family = "binomial")
+reg <- glm(home_win ~ pts_home+yds_home+yds_away+turnovers_home+turnovers_away, data = games, family = "binomial")
 
 vif(reg)
 
 summary(reg)
+
+importance_reg <- varImp(reg)
+
+importance_reg %>%
+  arrange(desc(Overall))
+
+probs_reg <- predict(reg, newdata = games, type = "response")
+pred_reg <- ifelse(probs_reg > 0.5, 1, 0)
+
+confusionMatrix(factor(pred), factor(games$home_win), positive = as.character(1))
+
 ```
 
 #### 5.2.2 Standings dataset (playoff as succes)
@@ -187,6 +198,14 @@ reg22 <- glm(playoffs ~ points_for+points_against+strength_of_schedule, data = s
 vif(reg22)
 
 summary(reg22)
+
+importance_reg22 <- varImp(reg22)
+
+
+importance_reg22 %>%
+  arrange(desc(Overall))
+
+
 ```
 
 #### 5.2.3 Standings dataset (Super Bowl win as success)
@@ -200,6 +219,10 @@ vif(reg3)
 
 summary(reg3)
 
+importance_reg3 <- varImp(reg3)
+
+importance_reg3 %>%
+  arrange(desc(Overall))
 
 #hypothesis 5
 reg4 <- glm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings, family = "binomial")
@@ -207,6 +230,11 @@ reg4 <- glm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standin
 vif(reg4)
 
 summary(reg4) 
+
+importance_reg4 <- varImp(reg4)
+
+importance_reg4 %>%
+  arrange(desc(Overall))
 ```
 
 
@@ -216,6 +244,7 @@ summary(reg4)
 RNGkind(sample.kind = "Rounding")
 set.seed(356)
 
+#Training and test dataset for games with home_win as success
 
 games$home_win <- as.factor(games$home_win)
 
@@ -223,10 +252,11 @@ games$home_win <- as.factor(games$home_win)
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
 
 games_train <- games[games_index,]
-games_train[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- list(NULL)
+games_train[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
 
 games_test <- games[-games_index,]
-games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- list(NULL)
+games_test[ ,c('away_team_name', 'home_team_name', 'winners')] <- list(NULL)
+
 
 ```
 
@@ -235,6 +265,32 @@ games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- li
 #### 6.1.1 Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
+reg <- glm(home_win ~ pts_home+yds_home+yds_away+turnovers_home+turnovers_away, data = games_train, family = "binomial")
+
+summary(reg)
+
+vif(reg)
+
+#since there is sign of heavy multicorrelation in both pts_home and pts_away(>200), we remove the pts_away variable, since we want to focus on home team performance.
+
+games_train[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_away')] <- list(NULL)
+games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'pts_winner')] <- list(NULL)
+
+reg <- glm(home_win ~ pts_home+yds_home+yds_away+turnovers_home+turnovers_away, data = games_train, family = "binomial")
+
+vif(reg)
+
+summary(reg)
+
+importance_reg <- varImp(reg)
+
+importance_reg %>%
+  arrange(desc(Overall))
+
+probs_reg <- predict(reg, newdata = games_test, type = "response")
+pred_reg <- ifelse(probs_reg > 0.5, 1, 0)
+
+confusionMatrix(factor(pred_reg), factor(games$home_win), positive = as.character(1))
 
 ```
 
@@ -275,18 +331,6 @@ plot(varimp_knn_norm, main="Variable Importance with k-neares neighbor classifie
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ### 6.2 Standings dataset (playoffs as success parameter)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
@@ -311,6 +355,33 @@ standings_test <- standings[-standings_index,]
 
 #### 6.2.1 Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
+
+reg2 <- glm(playoffs ~ points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings_train, family = "binomial")
+
+summary(reg2)
+
+vif(reg2)
+
+standings_train[, c('points_differential', 'margin_of_victory', 'simple_rating', 'offensive_ranking', 'defensive_ranking')] <- list(NULL)
+standings_test[, c('points_differential', 'margin_of_victory', 'simple_rating', 'offensive_ranking', 'defensive_ranking')] <- list(NULL)
+
+reg2 <- glm(playoffs ~ points_for+points_against+strength_of_schedule, data = standings_train, family = "binomial")
+
+vif(reg2)
+
+summary(reg2)
+
+importance_reg2 <- varImp(reg2)
+
+
+importance_reg2 %>%
+  arrange(desc(Overall))
+
+probs_reg2 <- predict(reg2, newdata = standings_test, type = "response")
+pred_reg2 <- ifelse(probs_reg2 > 0.5, 1, 0)
+
+confusionMatrix(factor(pred), factor(standings$playoffs), positive = as.character(1))
+
 
 
 ```
