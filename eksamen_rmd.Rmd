@@ -117,25 +117,19 @@ ggplot(data = games) +
 
 
 
+#Creating dataset of only winners of games
+game_winners <- games["winners"] %>% 
+  group_by(winners) %>% 
+  mutate(total_wins = n()) %>% 
+  ungroup() %>% 
+  count(winners, sort = TRUE)
 
+#Wordcloud
+wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
+          max.words=200, random.order=FALSE, rot.per=0.3, 
+          colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 
-#Statistics on games dataset
-table(games$home_win)
-3045/(3045+2279)
-
-
-colMeans(games[, 6:7])
-colMeans(games[, 8:9]) 
-colMeans(games[, 10:11])
-
-
-
-
-
-
-
-
-  #Correlation between wins and SB wins
+#Correlation between wins and SB wins
 corr_subset <- game_winners[1:32,] 
 corr_subset$sb_wins <- c(6,2,1,1,2,1,1,1,1,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0)
 
@@ -146,22 +140,26 @@ corr_subset %>%
     theme(plot.title = element_text(hjust = 0.5)) 
 
 
+
+
+#Statistics on games dataset
+table(games$home_win)
+3045/(3045+2279)
+
+stats <- data.frame(HomeTeam=round(c(mean(games$pts_home),mean(games$yds_home),mean(games$turnovers_home)), digits = 2), AwayTeam=round(c(mean(games$pts_away),mean(games$yds_away),mean(games$turnovers_away)), digits = 2))
+row.names(stats) <- c("Points", "Yards", "Turnovers")
+stats
+
+
 ```
  
+ 
 
-#### 5.1.1 Wordcloud
+#### Wordcloud
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-#Creating dataset of only winners of games
-game_winners <- games["winners"] %>% 
-  group_by(winners) %>% 
-  mutate(total_wins = n()) %>% 
-  ungroup() %>% 
-  count(winners, sort = TRUE)
 
-wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
-          max.words=200, random.order=FALSE, rot.per=0.3, 
-          colors=brewer.pal(9, "GnBu")[3:9], scale=c(3,.5))
 ```
+
 
 
 ### 5.2 Regression models
