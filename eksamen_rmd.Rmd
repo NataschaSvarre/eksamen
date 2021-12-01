@@ -170,8 +170,6 @@ wordcloud(words = game_winners$winners, freq = game_winners$n, min.freq = 0,
 
 games$home_win <- as.factor(games$home_win)
 
-
-
 reg <- glm(home_win ~ pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games, family = "binomial")
 
 vif(reg)
@@ -181,25 +179,34 @@ summary(reg)
 
 #### 5.2.2 Standings dataset (playoff as succes)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-reg2 <- glm(playoffs ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
 
-vif(reg2)
+standings$playoffs <- as.factor(standings$playoffs)
 
-summary(reg2)
+reg22 <- glm(playoffs ~ points_for+points_against+strength_of_schedule, data = standings, family = "binomial")
+
+vif(reg22)
+
+summary(reg22)
 ```
 
 #### 5.2.3 Standings dataset (Super Bowl win as success)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
-reg3 <- lm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings)
+
+standings$sb_winner <- as.factor(standings$sb_winner)
+
+reg3 <- glm(sb_winner ~ wins+points_for+points_against+strength_of_schedule, data = standings, family = "binomial")
+
+vif(reg3)
 
 summary(reg3)
 
 
-reg4 <- lm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings)
+#hypothesis 5
+reg4 <- glm(sb_winner ~ wins+offensive_ranking+defensive_ranking, data = standings, family = "binomial")
 
+vif(reg4)
 
-
-summary(reg4) #hypothesis 5
+summary(reg4) 
 ```
 
 
