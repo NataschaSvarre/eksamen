@@ -9,8 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-
-
 ## 1 Introduction
 ## 2 Theory
 ## 3 Data
@@ -119,14 +117,17 @@ ggplot(data = games) +
 
 
 
-  #Correlation between points and yards
-games %>% 
-    ggplot(aes(x = yds_home, y = pts_home)) + 
-    geom_point()
 
-games %>% 
-    ggplot(aes(x = yds_away, y = pts_away)) + 
-    geom_point()
+
+#Statistics on games dataset
+table(games$home_win)
+3045/(3045+2279)
+
+
+colMeans(games[, 6:7])
+colMeans(games[, 8:9]) 
+colMeans(games[, 10:11])
+
 
 
 
@@ -135,7 +136,6 @@ games %>%
 
 
   #Correlation between wins and SB wins
-
 corr_subset <- game_winners[1:32,] 
 corr_subset$sb_wins <- c(6,2,1,1,2,1,1,1,1,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0)
 
@@ -147,7 +147,7 @@ corr_subset %>%
 
 
 ```
-
+ 
 
 #### 5.1.1 Wordcloud
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
