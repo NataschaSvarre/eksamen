@@ -81,6 +81,13 @@ str(games)
 
 ```
 
+###3.3 Imbalanced data
+```{r}
+
+
+
+
+```
 
 
 
