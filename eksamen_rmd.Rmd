@@ -83,7 +83,9 @@ str(games)
 
 ###3.3 Imbalanced data
 ```{r}
-#Home win to a factor 
+#Factors
+games$home_win <- as.factor(games$home_win)
+standings$playoffs <- as.factor(standings$playoffs)
 standings$sb_winner <- as.factor(standings$sb_winner)
 
 #Barplot of observations of Super Bowl
@@ -101,7 +103,6 @@ ggplot(data = standings) +
   theme(plot.title = element_text(hjust = 0.5))
 
 #Home win to a factor 
-games$home_win <- as.factor(games$home_win)
 
 #Barplot of observations of home_win
 ggplot(data = games) + 
@@ -109,9 +110,6 @@ ggplot(data = games) +
   theme_linedraw() + 
   labs(title = "Home win 2000-2019", x = "Playoffs", y = "Observations") +
   theme(plot.title = element_text(hjust = 0.5))
-
-
-
 
 
 ```
