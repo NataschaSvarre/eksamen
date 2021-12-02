@@ -83,7 +83,6 @@ str(games)
 
 ###3.3 Imbalanced data
 ```{r}
-```{r}
 #Factors
 games$home_win <- as.factor(games$home_win)
 standings$playoffs <- as.factor(standings$playoffs)
