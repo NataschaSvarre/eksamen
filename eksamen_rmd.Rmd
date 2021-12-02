@@ -425,7 +425,7 @@ importance_reg3 %>%
 probs_reg3 <- predict(reg3, newdata = standings_test2, type = "response")
 pred_reg3 <- ifelse(probs_reg3 > 0.5, 1, 0)
 
-confusionMatrix(factor(pred_reg2), factor(standings_test$playoffs), positive = as.character(1))
+confusionMatrix(factor(pred_reg2), factor(standings_test2$sb_winner), positive = as.character(1))
 
 
 #hypothesis 5 - Since point against is significant we can conclude that having a good defence is the most important, since points against you have a larger negative impact on your chances of winning super bowl compared to the positive impact that points that you score have. 
