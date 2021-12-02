@@ -83,6 +83,9 @@ str(games)
 
 ###3.3 Imbalanced data
 ```{r}
+#Home win to a factor 
+standings$sb_winner <- as.factor(standings$sb_winner)
+
 #Barplot of observations of Super Bowl
 ggplot(data = standings) + 
   geom_bar(aes(x = fct_infreq(sb_winner))) + 
