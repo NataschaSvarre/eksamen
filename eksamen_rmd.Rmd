@@ -83,33 +83,39 @@ str(games)
 
 ###3.3 Imbalanced data
 ```{r}
+```{r}
 #Factors
 games$home_win <- as.factor(games$home_win)
 standings$playoffs <- as.factor(standings$playoffs)
 standings$sb_winner <- as.factor(standings$sb_winner)
 
-#Barplot of observations of Super Bowl
-ggplot(data = standings) + 
-  geom_bar(aes(x = fct_infreq(sb_winner))) + 
-  theme_linedraw() + 
-  labs(title = "Winning Super bowl 2000-2019", x = "Super bowl", y = "Observations") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-#Barplot of observations of playoffs
-ggplot(data = standings) + 
-  geom_bar(aes(x = fct_infreq(playoffs))) + 
-  theme_linedraw() + 
-  labs(title = "Reaching playoffs 2000-2019", x = "Playoffs", y = "Observations") +
-  theme(plot.title = element_text(hjust = 0.5))
-
-#Home win to a factor 
-
+#Games
 #Barplot of observations of home_win
 ggplot(data = games) + 
   geom_bar(aes(x = fct_infreq(home_win))) + 
   theme_linedraw() + 
-  labs(title = "Home win 2000-2019", x = "Playoffs", y = "Observations") +
+  labs(title = "Observations of Home win 2000-2019", x = "Home win", y = "Observations") +
   theme(plot.title = element_text(hjust = 0.5))
+
+#Standings
+#Barplot of observations of playoffs
+ggplot(data = standings) + 
+  geom_bar(aes(x = fct_infreq(playoffs))) + 
+  theme_linedraw() + 
+  labs(title = "Observations of Reaching playoffs 2000-2019", x = "Reaching Playoffs", y = "Observations") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Barplot of observations of Super Bowl
+ggplot(data = standings) + 
+  geom_bar(aes(x = fct_infreq(sb_winner))) + 
+  theme_linedraw() + 
+  labs(title = "Observations of Winning Super bowl 2000-2019", x = "Super bowl", y = "Observations") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Tables
+table(games$home_win)
+table(standings$sb_winner)
+table(standings$playoffs)
 
 
 ```
