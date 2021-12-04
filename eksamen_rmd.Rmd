@@ -262,7 +262,7 @@ predictions_svm <- predict(object = model_svm, games_test[,2:6])
 confusionMatrix(predictions_svm, games_test[,1], positive = "1")
 
 varimp_svm <- varImp(model_svm)
-plot(varimp_svm, main="Variable Importance with support vector machine classifier")
+plot(varimp_svm, main="Variable Importance with Support Vector Machine classifier")
 
 
 ```
@@ -280,7 +280,7 @@ predictions_knn_norm <- predict(object = model_knn_norm, games_test[,2:6])
 confusionMatrix(predictions_knn_norm, games_test[,1], positive = "1")
 
 varimp_knn_norm <- varImp(model_knn_norm)
-plot(varimp_knn_norm, main="Variable Importance with k-nearest neighbor classifier")
+plot(varimp_knn_norm, main="Variable Importance with K-Nearest Neighbor classifier")
 
 ```
 
@@ -353,7 +353,7 @@ predictions_svm2 <- predict(object = model_svm2, standings_test[,1:3])
 confusionMatrix(predictions_svm2, standings_test[,4], positive = "1")
 
 varimp_svm2 <- varImp(model_svm2)
-plot(varimp_svm2, main="Variable Importance with support vector machine classifier")
+plot(varimp_svm2, main="Variable Importance with Support Vector Machine classifier")
 ```
 
 
@@ -371,7 +371,7 @@ predictions_knn_norm2 <- predict(object = model_knn_norm2, standings_test[,1:3])
 confusionMatrix(predictions_knn_norm2, standings_test[,4], positive = "1") 
 
 varimp_knn_norm2 <- varImp(model_knn_norm2)
-plot(varimp_knn_norm2, main="Variable Importance with k-neares neighbor classifier")
+plot(varimp_knn_norm2, main="Variable Importance with K-Nearest Neighbor classifier")
 ```
 
 
@@ -451,7 +451,7 @@ predictions_svm3 <- predict(object = model_svm3, standings_test2[,1:4])
 confusionMatrix(predictions_svm3, standings_test2[,6], positive = "1")
 
 varimp_svm3 <- varImp(model_svm3)
-plot(varimp_svm3, main="Variable Importance with support vector machine classifier")
+plot(varimp_svm3, main="Variable Importance with Support Vector Machine classifier")
 ```
 
 
@@ -468,7 +468,7 @@ predictions_knn_norm3 <- predict(object = model_knn_norm3, standings_test2[,1:4]
 confusionMatrix(predictions_knn_norm3, standings_test2[,6], positive = "1") 
 
 varimp_knn_norm3 <- varImp(model_knn_norm3)
-plot(varimp_knn_norm3, main="Variable Importance with k-nearest neighbor classifier")
+plot(varimp_knn_norm3, main="Variable Importance with K-Nearest Neighbor classifier")
 ```
 
 ## 7 Results
