@@ -18,7 +18,7 @@ pacman::p_load(
   ggvis,
   rpart.plot,
   ggmap, #for plotting maps
-  RColorBrewer, #provide pretty colour palettes
+  RColorBrewer, #pretty colour palettes
   lubridate, #for converting time variables into date format
   hrbrthemes, #for more style themes
   data.table, #for working with data.table
@@ -37,9 +37,9 @@ pacman::p_load(
 
 
 
-### 3.1 Data cleaning
+### 3 Data 
 
-#### 3.1.1 Data on NFL season standings 2000-2019
+#### Data on NFL season standings 2000-2019
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 standings <- read.csv("standings.csv")
 standings <- as.data.frame(standings)
@@ -54,7 +54,7 @@ standings$sb_winner <- ifelse(standings$sb_winner == "Won Superbowl", 1 ,0)
 str(standings)
 ```
 
-#### 3.1.2 Data on NFL game results 2000-2019
+#### Data on NFL game results 2000-2019
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 games <- read.csv("games.csv")
 games <- as.data.frame(games)
@@ -195,7 +195,7 @@ stats
 
 
 
-## 6 Prediction models
+## 5.2 Predictive models
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 RNGkind(sample.kind = "Rounding")
@@ -214,12 +214,11 @@ games_train[ ,c('away_team_name', 'home_team_name', 'winners', 'tie')] <- list(N
 games_test <- games[-games_index,]
 games_test[ ,c('away_team_name', 'home_team_name', 'winners', 'tie')] <- list(NULL)
 
-
 ```
 
-### 6.1 Games dataset
+### 5.2.1 Games dataset (game-level)
 
-#### 6.1.1 Logistic regression
+#### Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 reg <- glm(home_win ~ pts_home+pts_away+yds_home+yds_away+turnovers_home+turnovers_away, data = games_train, family = "binomial")
@@ -252,7 +251,7 @@ confusionMatrix(factor(pred_reg), factor(games_test$home_win), positive = as.cha
 ```
 
 
-#### 6.1.2 SVM (Support Vector Machine)
+#### SVM (Support Vector Machine)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 model_svm<- train(games_train[, 2:6], games_train[, 1], method = 'svmLinear')
@@ -268,11 +267,11 @@ plot(varimp_svm, main="Variable Importance with Support Vector Machine classifie
 ```
 
 
-#### 6.1.3 K-nearest neighbour
+#### K-nearest neighbour
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm <- train(games_train[, 2:6], games_train[, 1], method = 'knn', preProcess = c("range")) 
- 
+
 # Predict the labels of the test set
 predictions_knn_norm <- predict(object = model_knn_norm, games_test[,2:6]) 
 
@@ -288,7 +287,7 @@ plot(varimp_knn_norm, main="Variable Importance with K-Nearest Neighbor classifi
 
 
 
-### 6.2 Standings dataset (playoffs as success parameter)
+### 5.2.2 Standings dataset (playoffs as success parameter)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 # Training and test dataset for standings with playoffs as success parameter
@@ -304,7 +303,7 @@ standings_test[ ,c('team_name')] <- list(NULL)
 
 
 
-#### 6.2.1 Logistic regression
+#### Logistic regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 
@@ -344,7 +343,7 @@ confusionMatrix(factor(pred_reg2), factor(standings_test$playoffs), positive = a
 
 
 
-#### 6.2.2 SVM
+#### SVM
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_svm2 <- train(standings_train[, 1:3], standings_train[, 4], method = 'svmLinear')
 predictions_svm2 <- predict(object = model_svm2, standings_test[,1:3])
@@ -359,11 +358,11 @@ plot(varimp_svm2, main="Variable Importance with Support Vector Machine classifi
 
 
 
-#### 6.2.3 KNN
+#### KNN
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm2 <- train(standings_train[, 1:3], standings_train[, 4], method = 'knn') 
- 
+
 # Predict the labels of the test set
 predictions_knn_norm2 <- predict(object = model_knn_norm2, standings_test[,1:3])
 
@@ -394,7 +393,7 @@ plot(varimp_knn_norm2, main="Variable Importance with K-Nearest Neighbor classif
 
 
 
-### 6.3 Standings dataset (winning superbowl as success parameter)
+### 5.2.3 Standings dataset (winning superbowl as success parameter)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Training and test dataset for standings with playoffs as success parameter
 standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) #Index
@@ -406,7 +405,7 @@ standings_test2 <- standings[-standings_index2,]
 standings_test2[ ,c('team_name')] <- list(NULL)
 ```
 
-#### 6.3.1 Logistic Regression
+#### Logistic Regression
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 
 reg3 <- glm(sb_winner ~ wins+loss+points_for+points_against+points_differential+margin_of_victory+strength_of_schedule+simple_rating+offensive_ranking+defensive_ranking, data = standings_train2, family = "binomial")
@@ -442,7 +441,7 @@ confusionMatrix(factor(pred_reg2), factor(standings_test2$sb_winner), positive =
 ```
 
 
-#### 6.3.2 SVM
+#### SVM
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 model_svm3 <- train(standings_train2[, 1:4], standings_train2[, 6], method = 'svmLinear') 
 predictions_svm3 <- predict(object = model_svm3, standings_test2[,1:4])
@@ -456,11 +455,11 @@ plot(varimp_svm3, main="Variable Importance with Support Vector Machine classifi
 
 
 
-#### 6.3.3 KNN
+#### KNN
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Train a model using KNN algorithm
 model_knn_norm3 <- train(standings_train2[, 1:4], standings_train2[, 6], method = 'knn')
- 
+
 # Predict the labels of the test set
 predictions_knn_norm3 <- predict(object = model_knn_norm3, standings_test2[,1:4]) 
 
@@ -471,4 +470,3 @@ varimp_knn_norm3 <- varImp(model_knn_norm3)
 plot(varimp_knn_norm3, main="Variable Importance with K-Nearest Neighbor classifier")
 ```
 
-## 7 Results
