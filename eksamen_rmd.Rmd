@@ -1,7 +1,7 @@
 ---
 title: "Research on NFL data"
 author: "Team 2 (Patrick Berthelsen, Natascha Svarre, Alex Rye & Nino Krupic)"
-date: "21/11/2021"
+date: "6/12/2021"
 output: html_document
 ---
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
@@ -205,7 +205,7 @@ set.seed(356)
 
 games$home_win <- as.factor(games$home_win)
 
-# Training and test dataset  
+
 games_index <- createDataPartition(games$home_win, p=0.8, list=FALSE) #Index
 
 games_train <- games[games_index,]
@@ -396,7 +396,7 @@ plot(varimp_knn_norm2, main="Variable Importance with K-Nearest Neighbor classif
 ### 5.2.3 Standings dataset (winning superbowl as success parameter)
 ```{r echo=FALSE, results='hide',message=FALSE, warning=FALSE}
 # Training and test dataset for standings with playoffs as success parameter
-standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) #Index
+standings_index2 <- createDataPartition(standings$sb_winner, p=0.8, list=FALSE) 
 
 standings_train2 <- standings[standings_index2,]
 standings_train2[ ,c('team_name')] <- list(NULL)
@@ -436,7 +436,6 @@ pred_reg3 <- ifelse(probs_reg3 > 0.5, 1, 0)
 confusionMatrix(factor(pred_reg2), factor(standings_test2$sb_winner), positive = as.character(1))
 
 
-#hypothesis 5 - Since point against is significant we can conclude that having a good defence is the most important, since points against you have a larger negative impact on your chances of winning super bowl compared to the positive impact that points that you score have. 
 
 ```
 
